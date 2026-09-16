@@ -1,0 +1,3 @@
+[submodule "vendor/wbtp"]
+	path = vendor/wbtp
+	url = https://github.com/gh-wbtp/wbtp.git
