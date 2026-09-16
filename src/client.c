@@ -3,9 +3,8 @@
 #include <stdio.h>
 #include <wbtp/net.h>
 #include <wbtp/errors.h>
-#include "cli.h"
 
-int client_request(int argc, const char *argv[], const WbtpRequest request, const char *hostname, uint16_t port)
+int client_request(int argc, const char *argv[], const CliFlags flags, const WbtpRequest request, const char *hostname, uint16_t port)
 {
     WbtpSocket client = socket(AF_INET, SOCK_STREAM, 0);
     if (client == WBTP_SOCKET_INVALID_VALUE)
@@ -80,7 +79,21 @@ int client_request(int argc, const char *argv[], const WbtpRequest request, cons
         return 0;
     }
 
-    printf("%.*s\n", response.payload_size, response.payload);
+    if (flags.verbose)
+    {
+        char buf[4096];
+        if (!wbtp_response_string(response, buf, 4096))
+        {
+            fprintf(stderr, "%s\n", wbtp_get_error());
+            close(client);
+            return 1;
+        }
+
+        printf("%s\n", buf);
+    }
+    else
+        printf("%.*s\n", response.payload_size, response.payload);
+
     close(client);
     return 0;
 }

@@ -7,7 +7,7 @@ int usage(int argc, const char *argv[], const char *error)
     if (error != NULL)
         fprintf(stderr, "%s\n", error);
 
-    fprintf(stderr, "Usage: %s [--type <get|put|request>] [--params <params>] [--payload <payload>] [--verbose] <url>\n", argv[0]);
+    fprintf(stderr, "Usage: %s [--type|-t <get|put|request>] [--params|-p <params>] [--payload|-pl <payload>] [--verbose|-v] <url>\n", argv[0]);
     return 1;
 }
 
@@ -26,13 +26,13 @@ int fill_flags(int argc, const char *argv[], CliFlags *flags)
     {
         char *arg = (char *)argv[i];
 
-        if (strcmp(arg, "--verbose") == 0)
+        if (strcmp(arg, "--verbose") == 0 || strcmp(arg, "-v") == 0)
         {
             flags->verbose = true;
             continue;
         }
 
-        if (strcmp(arg, "--type") == 0)
+        if (strcmp(arg, "--type") == 0 || strcmp(arg, "-t") == 0)
         {
             if (i + 1 >= argc)
                 return usage(argc, argv, "'--type' must be followed by a valid request type!");
@@ -62,7 +62,7 @@ int fill_flags(int argc, const char *argv[], CliFlags *flags)
             return usage(argc, argv, buf);
         }
 
-        if (strcmp(arg, "--params") == 0)
+        if (strcmp(arg, "--params") == 0 || strcmp(arg, "-p") == 0)
         {
             if (i + 1 >= argc)
                 return usage(argc, argv, "'--params' must be followed by a string!");
@@ -71,7 +71,7 @@ int fill_flags(int argc, const char *argv[], CliFlags *flags)
             continue;
         }
 
-        if (strcmp(arg, "--payload") == 0)
+        if (strcmp(arg, "--payload") == 0 || strcmp(arg, "-pl") == 0)
         {
             if (i + 1 >= argc)
                 return usage(argc, argv, "'--payload' must be followed by a string!");

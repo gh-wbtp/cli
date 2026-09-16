@@ -95,7 +95,7 @@ int main(int argc, const char *argv[])
     WbtpRequest request = wbtp_request(flags.type, path, flags.payload == NULL ? 0 : strlen(flags.payload), (char *)flags.payload);
     memcpy(request.params, flags.params, strlen(flags.params));
 
-    int success = client_request(argc, argv, request, hostname, port);
+    int success = client_request(argc, argv, flags, request, hostname, port);
     free(hostname);
     return success;
 }
