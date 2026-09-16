@@ -1,0 +1,154 @@
+name: Build & release
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-x86_64
+            os: windows-2025
+            arch: x86_64
+            archive: zip
+
+          - platform: windows-arm64
+            os: windows-11-arm
+            arch: arm64
+            archive: zip
+
+          - platform: linux-x86_64
+            os: ubuntu-24.04
+            arch: x86_64
+            archive: tar.gz
+
+          - platform: linux-arm64
+            os: ubuntu-24.04-arm
+            arch: arm64
+            archive: tar.gz
+
+          - platform: macos-arm64
+            os: macos-14
+            arch: arm64
+            archive: tar.gz
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup CMake 4.2
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: "4.2.3"
+
+      - name: Build library
+        shell: bash
+        run: |
+          chmod +x ./build.sh
+          ./build.sh Release
+
+      - name: Prepare bundle
+        shell: bash
+        run: |
+          mkdir -p package/
+          cp LICENSE package/
+          cp README.md package/
+          if [[ "${{ matrix.archive }}" == "zip" ]]; then
+            find build -type f -name 'wbtp.exe' -exec cp {} package/ \; -quit
+          else
+            find build -type f -name 'wbtp' -exec cp {} package/ \; -quit
+          fi
+          test -f package/wbtp.exe || test -f package/wbtp
+
+      - name: Create ZIP
+        if: matrix.archive == 'zip'
+        shell: bash
+        run: |
+          7z a "wbtp-cli-${{ matrix.platform }}.zip" ./package/*
+
+      - name: Create TAR
+        if: matrix.archive == 'tar.gz'
+        shell: bash
+        run: |
+          tar -czf "wbtp-cli-${{ matrix.platform }}.tar.gz" -C package .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}
+          path: |
+            wbtp-cli-${{ matrix.platform }}.zip
+            wbtp-cli-${{ matrix.platform }}.tar.gz
+          if-no-files-found: error
+
+  release:
+    name: Create release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calculate CalVer
+        id: version
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          DATE="$(date -u +'%Y.%m.%d')"
+          echo "Looking for existing builds for ${DATE}..."
+          LAST_BUILD="$(
+            gh release list --limit 1000 --json tagName --jq '.[].tagName' |
+            awk -v date="$DATE" '
+              $0 ~ "^" date "-[0-9]+$" {
+                sub("^" date "-", "")
+                if ($0 + 0 > max)
+                  max = $0 + 0
+              }
+              END {
+                if (max > 0)
+                  print max
+              }
+            '
+          )"
+          if [[ -z "$LAST_BUILD" ]]; then
+            BUILD=1
+          else
+            BUILD=$((LAST_BUILD + 1))
+          fi
+          TAG="${DATE}-$(printf '%02d' "$BUILD")"
+          echo "date=${DATE}" >> "$GITHUB_OUTPUT"
+          echo "build=${BUILD}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "Release: ${TAG}"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Show artifacts
+        run: |
+          find artifacts -type f -print
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          gh release create "$TAG" --title "$TAG" --generate-notes artifacts/*/*.zip artifacts/*/*.tar.gz
