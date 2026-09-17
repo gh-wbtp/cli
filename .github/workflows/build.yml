@@ -69,6 +69,7 @@ jobs:
           cp README.md package/
           if [[ "${{ matrix.archive }}" == "zip" ]]; then
             find build -type f -name 'wbtp.exe' -exec cp {} package/ \; -quit
+            find build -type f -name 'wbtp.dll' -exec cp {} package/ \; -quit
           else
             find build -type f -name 'wbtp' -exec cp {} package/ \; -quit
           fi
