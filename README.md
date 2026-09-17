@@ -11,8 +11,29 @@ Each release package provides native binaries/executables for one of [5 platform
 ---
 
 ### Table of Contents
+- [Installation](#installation)
 - [CLI Documentation](#cli-documentation)
 - [Supported Platforms (5)](#supported-platforms-5)
+
+---
+
+### Installation
+
+> **GUI installer coming to Win(slop|dows) soon!** For now, extract the release ZIP and place both the **EXE** and **DLL** next to each other in some location on your **PATH**. This installation section is meant only for Unix-like systems.
+
+We have a remote sh/bash script you can execute directly! It automatically picks a package for your OS/arch, downloads it, extracts it, and places the binaries where they need to go. It's that easy!
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/script/install.sh | sh              # User-local
+curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/script/install.sh | sh -s -- --sys  # System-wide
+```
+
+**Suppose you get tired of us...** you're cooked? Nope! Actually you are, 'cus you do in fact need it to survive. But we also provided an uninstallation script for the weirdos :)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/script/uninstall.sh | sh              # User-local
+curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/script/uninstall.sh | sh -s -- --sys  # System-wide
+```
 
 ---
 
