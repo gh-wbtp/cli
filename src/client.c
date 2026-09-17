@@ -111,6 +111,8 @@ int client_request(int argc, const char *argv[], const CliFlags flags, const Wbt
 
         printf("%s\n", buf);
     }
+    else if (flags.raw)
+        fwrite(response.payload, 1, response.payload_size, stdout);
     else
         printf("%.*s\n", response.payload_size, response.payload);
 

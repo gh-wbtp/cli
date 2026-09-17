@@ -7,7 +7,7 @@ int usage(int argc, const char *argv[], const char *error)
     if (error != NULL)
         fprintf(stderr, "%s\n", error);
 
-    fprintf(stderr, "Usage: %s [--type|-t <get|put|request>] [--params|-p <params>] [--payload|-pl <payload>] [--verbose|-v] <url>\n", argv[0]);
+    fprintf(stderr, "Usage: %s [--type|-t <get|put|request>] [--params|-p <params>] [--payload|-pl <payload>] [--raw|-r] [--verbose|-v] <url>\n", argv[0]);
     return 1;
 }
 
@@ -16,6 +16,7 @@ int fill_flags(int argc, const char *argv[], CliFlags *flags)
     flags->type = WBTP_GET;
     flags->params = "";
     flags->payload = NULL;
+    flags->raw = false;
     flags->verbose = false;
     flags->url = NULL;
 
@@ -25,6 +26,12 @@ int fill_flags(int argc, const char *argv[], CliFlags *flags)
     for (size_t i = 1; i < argc; i++)
     {
         char *arg = (char *)argv[i];
+
+        if (strcmp(arg, "--raw") == 0 || strcmp(arg, "-r") == 0)
+        {
+            flags->raw = true;
+            continue;
+        }
 
         if (strcmp(arg, "--verbose") == 0 || strcmp(arg, "-v") == 0)
         {

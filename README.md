@@ -43,10 +43,11 @@ Quick notes:
 - Passing no args shows a minimal help menu.
 - Only the server URL is required to be passed by default.
 - The server URL may be passed anywhere outside the value of a flag.
+- Raw mode (`--raw`) is best for non-textual **response** payloads such as image data.
 
 Usage:
 ```xml
-wbtp [--type|-t <get|put|request>] [--params|-p <params>] [--payload|-pl <payload>] [--verbose|-v] <url>
+wbtp [--type|-t <get|put|request>] [--params|-p <params>] [--payload|-pl <payload>] [--raw|-r] [--verbose|-v] <url>
 ```
 
 |Flag|Shorthand|Optional|Description|
@@ -54,6 +55,7 @@ wbtp [--type|-t <get|put|request>] [--params|-p <params>] [--payload|-pl <payloa
 |`--type`|`-t`|✅|Request type (string with strict values)|
 |`--params`|`-p`|✅|Request params (string)|
 |`--payload`|`-pl`|✅|Request payload (string)|
+|`--raw`|`-r`|When passed, prints the response payload directly to stdout (no text constraints or newlines)|
 |`--verbose`|`-v`|✅|When passed, always prints out stringified response data|
 
 **Correct usages:**

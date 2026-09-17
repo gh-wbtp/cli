@@ -7,6 +7,7 @@ typedef struct
     WbtpRequestType type;
     const char *params;
     const char *payload;
+    bool raw;
     bool verbose;
     const char *url;
 } CliFlags;
