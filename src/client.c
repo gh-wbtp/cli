@@ -1,29 +1,49 @@
+#define _POSIX_C_SOURCE 200112L
 #include "client.h"
 #include <string.h>
 #include <stdio.h>
 #include <wbtp/net.h>
 #include <wbtp/errors.h>
 
+#ifdef _WIN32
+#include <ws2tcpip.h>
+#else
+#include <netdb.h>
+#endif
+
 int client_request(int argc, const char *argv[], const CliFlags flags, const WbtpRequest request, const char *hostname, uint16_t port)
 {
-    WbtpSocket client = socket(AF_INET, SOCK_STREAM, 0);
-    if (client == WBTP_SOCKET_INVALID_VALUE)
-    {
-        fprintf(stderr, "Failed to create socket!\n");
-        return 1;
-    }
+    WbtpSocket client = WBTP_SOCKET_INVALID_VALUE;
 
-    struct sockaddr_in address;
-    memset(&address, 0, sizeof(address));
-    address.sin_family = AF_INET;
-    address.sin_port = htons(port);
-    if (inet_pton(AF_INET, hostname, &(address.sin_addr)) <= 0)
+    char port_string[6];
+    snprintf(port_string, sizeof(port_string), "%u", port);
+
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    struct addrinfo *addresses;
+    if (getaddrinfo(hostname, port_string, &hints, &addresses) != 0)
         return usage(argc, argv, "Invalid hostname!");
 
-    if (connect(client, (struct sockaddr *)&address, sizeof(address)) == WBTP_SOCKET_ERROR_VALUE)
+    for (struct addrinfo *address = addresses; address; address = address->ai_next)
+    {
+        client = socket(address->ai_family, address->ai_socktype, address->ai_protocol);
+        if (client == WBTP_SOCKET_INVALID_VALUE)
+            continue;
+
+        if (connect(client, address->ai_addr, address->ai_addrlen) == 0)
+            break;
+
+        close(client);
+        client = WBTP_SOCKET_INVALID_VALUE;
+    }
+
+    freeaddrinfo(addresses);
+    if (client == WBTP_SOCKET_INVALID_VALUE)
     {
         fprintf(stderr, "Connection refused! It's likely no server exists on that port.\n");
-        close(client);
         return 1;
     }
 
