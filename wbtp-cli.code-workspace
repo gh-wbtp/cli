@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": ".",
+			"name": "CLI"
+		},
+		{
+			"path": "installers/windows",
+			"name": "Windows Installer"
+		},
+		{
+			"path": "vendor/wbtp",
+			"name": "[VENDOR] libWBTP"
+		}
+	],
+	"settings": {}
+}
