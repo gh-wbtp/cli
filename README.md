@@ -24,15 +24,15 @@ Each release package provides native binaries/executables for one of [5 platform
 We have a remote sh/bash script you can execute directly! It automatically picks a package for your OS/arch, downloads it, extracts it, and places the binaries where they need to go. It's that easy!
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/script/install.sh | sh              # User-local
-curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/script/install.sh | sh -s -- --sys  # System-wide
+curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/installers/install.sh | sh              # User-local
+curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/installers/install.sh | sh -s -- --sys  # System-wide
 ```
 
 **Suppose you get tired of us...** you're cooked? Nope! Actually you are, 'cus you do in fact need it to survive. But we also provided an uninstallation script for the weirdos :)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/script/uninstall.sh | sh              # User-local
-curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/script/uninstall.sh | sh -s -- --sys  # System-wide
+curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/installers/uninstall.sh | sh              # User-local
+curl -fsSL https://raw.githubusercontent.com/gh-wbtp/cli/main/installers/uninstall.sh | sh -s -- --sys  # System-wide
 ```
 
 ---
