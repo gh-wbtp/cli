@@ -94,7 +94,7 @@ jobs:
         with:
           name: ${{ matrix.platform }}
           path: |
-            wbtp-cli-portable-${{ matrix.platform }}.zip
+            wbtp-cli-${{ matrix.os }}-portable-${{ matrix.arch }}.zip
             wbtp-cli-${{ matrix.platform }}.tar.gz
             wbtp-cli-setup-${{ matrix.arch }}.exe
           if-no-files-found: error
