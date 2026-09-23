@@ -8,6 +8,12 @@
 
 int main(int argc, const char *argv[])
 {
+#ifdef _WIN32
+    WSADATA wsa_data;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
+        return usage(argc, argv, "Failed to initialize Winsock!");
+#endif
+
     CliFlags flags = {};
     int flags_filled = fill_flags(argc, argv, &flags);
     if (flags_filled != 0)
@@ -97,5 +103,9 @@ int main(int argc, const char *argv[])
 
     int success = client_request(argc, argv, flags, request, hostname, port);
     free(hostname);
+
+#ifdef _WIN32
+    WSACleanup();
+#endif
     return success;
 }
