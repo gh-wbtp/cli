@@ -19,8 +19,6 @@ Each release package provides native binaries/executables for one of [5 platform
 
 ### Installation
 
-> **GUI installer coming to Win(slop|dows) soon!** For now, extract the release ZIP and place both the **EXE** and **DLL** next to each other in some location on your **PATH**. This installation section is meant only for Unix-like systems.
-
 We have a remote sh/bash script you can execute directly! It automatically picks a package for your OS/arch, downloads it, extracts it, and places the binaries where they need to go. It's that easy!
 
 ```bash

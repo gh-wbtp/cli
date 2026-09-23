@@ -70,6 +70,8 @@ jobs:
           if [[ "${{ matrix.archive }}" == "zip" ]]; then
             find build -type f -name 'wbtp.exe' -exec cp {} package/ \; -quit
             find build -type f -name 'wbtp.dll' -exec cp {} package/ \; -quit
+            iscc installers/windows/setup.iss
+            mv installers/windows/wbtp-cli-setup.exe wbtp-cli-setup-${{ matrix.arch }}.exe
           else
             find build -type f -name 'wbtp' -exec cp {} package/ \; -quit
           fi
@@ -79,7 +81,7 @@ jobs:
         if: matrix.archive == 'zip'
         shell: bash
         run: |
-          7z a "wbtp-cli-${{ matrix.platform }}.zip" ./package/*
+          7z a "wbtp-cli-portable-${{ matrix.platform }}.zip" ./package/*
 
       - name: Create TAR
         if: matrix.archive == 'tar.gz'
@@ -94,6 +96,7 @@ jobs:
           path: |
             wbtp-cli-${{ matrix.platform }}.zip
             wbtp-cli-${{ matrix.platform }}.tar.gz
+            wbtp-cli-setup-${{ matrix.arch }}.exe
           if-no-files-found: error
 
   release:
@@ -154,4 +157,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
         run: |
-          gh release create "$TAG" --title "$TAG" --generate-notes artifacts/*/*.zip artifacts/*/*.tar.gz
+          gh release create "$TAG" --title "$TAG" --generate-notes artifacts/*/*.zip artifacts/*/*.tar.gz artifacts/*/*.exe
