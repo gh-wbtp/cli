@@ -81,7 +81,7 @@ jobs:
         if: matrix.archive == 'zip'
         shell: bash
         run: |
-          7z a "wbtp-cli-portable-${{ matrix.platform }}.zip" ./package/*
+          7z a "wbtp-cli-${{ matrix.os }}-portable-${{ matrix.arch }}.zip" ./package/*
 
       - name: Create TAR
         if: matrix.archive == 'tar.gz'
